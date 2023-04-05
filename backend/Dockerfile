@@ -14,6 +14,8 @@ RUN apt-get update \
 RUN pip install --upgrade pip
 COPY ./requirements.txt /backend/requirements.txt
 RUN pip install -r requirements.txt
+RUN apt-get install libpq-dev python-dev
+RUN pip install psycopg2
 
 COPY . /backend
 
