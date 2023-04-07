@@ -1,4 +1,8 @@
 from typing import List
+
+from fastapi import HTTPException
+from starlette.status import HTTP_400_BAD_REQUEST
+
 from app.db.repositories.base import BaseRepository
 from app.models.cleaning import CleaningCreate, CleaningUpdate, CleaningInDB
 
