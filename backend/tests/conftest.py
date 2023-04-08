@@ -17,6 +17,9 @@ from app.db.repositories.cleanings import CleaningsRepository
 from app.models.user import UserCreate, UserInDB
 from app.db.repositories.users import UsersRepository
 
+from app.core.config import SECRET_KEY, JWT_TOKEN_PREFIX
+from app.services import auth_service
+
 
 # Apply migrations at beginning and end of testing session
 @pytest_asyncio.fixture(scope="session")
@@ -42,6 +45,15 @@ def app(apply_migrations: None) -> FastAPI:
 @pytest_asyncio.fixture
 def db(app: FastAPI) -> Database:
     return app.state._db
+
+@pytest_asyncio.fixture
+def authorized_client(client: AsyncClient, test_user: UserInDB) -> AsyncClient:
+    access_token = auth_service.create_access_token_for_user(user=test_user, secret_key=str(SECRET_KEY))
+    client.headers = {
+        **client.headers,
+        "Authorization": f"{JWT_TOKEN_PREFIX} {access_token}",
+    }
+    return client
 
 
 # Make requests in our tests
