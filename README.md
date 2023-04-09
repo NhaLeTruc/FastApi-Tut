@@ -4,6 +4,21 @@ This repo holds the code used to create a FastAPI backend for a fake cleaning ma
 
 Each part of the application is built and tested in small, manageable chunks - accompanied by written tutorials.
 
+Quick Cmd:
+```bash
+docker ps
+docker exec -it <phresh_server_id> bash # login to main server
+
+# migrate postgres db in main server
+alembic upgrade head 
+
+# rollback
+alembic downgrade base
+
+# in project folder connect to postgres db
+docker-compose exec db psql -h localhost -U postgres --dbname=postgres
+```
+
 The technology stack used to create the backend of this application is as follows:
 
 - Framework

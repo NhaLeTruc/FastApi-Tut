@@ -50,27 +50,6 @@ def timestamps(indexed: bool = False) -> Tuple[sa.Column, sa.Column]:
     )
 
 
-def create_cleanings_table() -> None:
-    op.create_table(
-        "cleanings",
-        sa.Column("id", sa.Integer, primary_key=True),
-        sa.Column("name", sa.Text, nullable=False, index=True),
-        sa.Column("description", sa.Text, nullable=True),
-        sa.Column("cleaning_type", sa.Text, nullable=False, server_default="spot_clean"),
-        sa.Column("price", sa.Numeric(10, 2), nullable=False),
-        *timestamps(),
-    )
-    op.execute(
-        """
-        CREATE TRIGGER update_cleanings_modtime
-            BEFORE UPDATE
-            ON cleanings
-            FOR EACH ROW
-        EXECUTE PROCEDURE update_updated_at_column();
-        """
-    )
-
-
 def create_users_table() -> None:
     op.create_table(
         "users",
@@ -117,11 +96,33 @@ def create_profiles_table() -> None:
     )
 
 
+def create_cleanings_table() -> None:
+    op.create_table(
+        "cleanings",
+        sa.Column("id", sa.Integer, primary_key=True),
+        sa.Column("name", sa.Text, nullable=False, index=True),
+        sa.Column("description", sa.Text, nullable=True),
+        sa.Column("cleaning_type", sa.Text, nullable=False, server_default="spot_clean"),
+        sa.Column("price", sa.Numeric(10, 5), nullable=False),
+        sa.Column("owner", sa.Integer, sa.ForeignKey("users.id", ondelete="CASCADE")),
+        *timestamps(indexed=True),
+    )
+    op.execute(
+        """
+        CREATE TRIGGER update_cleanings_modtime
+            BEFORE UPDATE
+            ON cleanings
+            FOR EACH ROW
+        EXECUTE PROCEDURE update_updated_at_column();
+        """
+    )
+
+
 def upgrade() -> None:
     create_updated_at_trigger()
-    create_cleanings_table()
     create_users_table()
     create_profiles_table()
+    create_cleanings_table()
 
 
 def downgrade() -> None:
