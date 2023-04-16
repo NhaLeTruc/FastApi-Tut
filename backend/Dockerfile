@@ -19,3 +19,12 @@ RUN pip install psycopg2
 
 COPY . /backend
 
+RUN chmod +x run.sh
+
+ENV PYTHONPATH=/backend
+
+RUN chown -R backend:backend $HOME
+
+USER app
+
+CMD ["run.sh"]
