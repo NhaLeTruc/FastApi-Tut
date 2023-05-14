@@ -19,12 +19,4 @@ RUN pip install psycopg2
 
 COPY . /backend
 
-RUN chmod +x run.sh
-
-ENV PYTHONPATH=/backend
-
-RUN chown -R backend:backend $HOME
-
-USER app
-
-CMD ["run.sh"]
+CMD ["uvicorn", "--host", "0.0.0.0", "--port", "8000", "app.api.server:app"]
